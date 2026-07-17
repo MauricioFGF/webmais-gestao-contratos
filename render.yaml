@@ -31,6 +31,8 @@ services:
         generateValue: true
       - key: NODE_ENV
         value: production
+      - key: FRONTEND_URL
+        value: https://webmais-frontend.onrender.com
 
   - type: web
     name: webmais-frontend
