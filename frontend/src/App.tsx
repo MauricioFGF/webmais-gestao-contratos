@@ -1,6 +1,7 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
 import { ProtectedRoute } from './auth/ProtectedRoute';
+import { RootRedirect } from './auth/RootRedirect';
 import { LoginPage } from './auth/LoginPage';
 import { ContractsPage } from './pages/ContractsPage';
 import { ClientsPage } from './pages/ClientsPage';
@@ -12,12 +13,13 @@ export default function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<RootRedirect />} />
             <Route path="/login" element={<LoginPage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/contracts" element={<ContractsPage />} />
               <Route path="/clients" element={<ClientsPage />} />
             </Route>
-            <Route path="*" element={<Navigate to="/contracts" replace />} />
+            <Route path="*" element={<RootRedirect />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

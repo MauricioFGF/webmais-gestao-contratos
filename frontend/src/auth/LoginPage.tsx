@@ -1,16 +1,23 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from './useAuth';
 import { extractErrorMessage, useToast } from '../components/useToast';
 
 export function LoginPage() {
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
   const [email, setEmail] = useState('admin@webmais.com');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  if (isLoading) {
+    return <div className="app-loading" aria-label="Carregando" />;
+  }
+  if (isAuthenticated) {
+    return <Navigate to="/contracts" replace />;
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
