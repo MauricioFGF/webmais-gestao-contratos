@@ -133,12 +133,67 @@ input:focus, select:focus {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  max-width: 480px;
+  max-width: 640px;
 }
 
 .form-actions {
   display: flex;
   gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.form-row label {
+  flex: 1;
+}
+
+.items-fieldset {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.items-fieldset legend {
+  font-size: 0.9rem;
+  color: var(--muted);
+  padding: 0 6px;
+}
+
+.item-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.item-row label:first-child {
+  flex: 2;
+}
+
+.item-row label {
+  flex: 1;
+}
+
+.items-fieldset > .btn-secondary {
+  align-self: flex-start;
+}
+
+.contract-total {
+  margin: 0;
+  align-self: flex-end;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.contract-total strong {
+  color: var(--text);
+  font-size: 1.15rem;
 }
 
 /* buttons */

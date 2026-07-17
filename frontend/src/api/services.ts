@@ -12,6 +12,9 @@ export const authApi = {
 export const clientsApi = {
   list: () => http.get<Client[]>('/clients'),
   create: (data: { name: string; document: string }) => http.post<Client>('/clients', data),
+  update: (id: string, data: { name: string; document: string }) =>
+    http.put<Client>(`/clients/${id}`, data),
+  remove: (id: string) => http.delete(`/clients/${id}`),
 };
 
 export const contractsApi = {

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { contractsApi } from '../api/services';
-import type { Contract, ContractSummary } from '../api/types';
+import { CONTRACT_TYPE_LABELS, type Contract, type ContractSummary } from '../api/types';
 import { StatusBadge } from '../components/StatusBadge';
 import { SummaryCards } from '../components/SummaryCards';
 import { Toast } from '../components/Toast';
@@ -67,6 +67,7 @@ export function ContractsPage() {
           <tr>
             <th>Número</th>
             <th>Cliente</th>
+            <th>Tipo</th>
             <th>Valor</th>
             <th>Vencimento</th>
             <th>Status</th>
@@ -76,7 +77,7 @@ export function ContractsPage() {
         <tbody>
           {contracts.length === 0 && (
             <tr>
-              <td colSpan={6} className="empty">
+              <td colSpan={7} className="empty">
                 Nenhum contrato cadastrado
               </td>
             </tr>
@@ -85,6 +86,7 @@ export function ContractsPage() {
             <tr key={c.id} className={c.id === highlightId ? 'row-highlight' : ''}>
               <td>{c.number}</td>
               <td>{c.client.name}</td>
+              <td>{CONTRACT_TYPE_LABELS[c.type]}</td>
               <td>{formatCurrency(c.value)}</td>
               <td>{formatDate(c.dueDate)}</td>
               <td>
