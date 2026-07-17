@@ -8,6 +8,7 @@ export default defineConfig({
     seed: 'tsx prisma/seed.ts',
   },
   datasource: {
-    url: process.env.DATABASE_URL!,
+    // Fallback só para comandos que não conectam (ex.: prisma generate no CI)
+    url: process.env.DATABASE_URL ?? 'postgresql://localhost:5432/contratos',
   },
 });
