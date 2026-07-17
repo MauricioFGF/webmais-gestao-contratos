@@ -40,6 +40,21 @@ código limpo > tela bonita.
 - [ ] README relata uso de ferramentas de IA (Claude Code) no desenvolvimento
 - [ ] Repositório no GitHub, link enviado ao RH em até 5 dias
 
+### Diferenciais implementados
+- [ ] Dockerfile do backend (multi-stage, migrate deploy no boot) e do frontend
+      (nginx) — além do docker-compose de infra
+- [ ] Blueprint de deploy no Render (`render.yaml`): Postgres + Key Value +
+      backend Docker + frontend estático (deploy efetivo depende de conta/ação
+      do usuário)
+- [ ] Testes automatizados (Vitest): regras de negócio no back
+      (`contract.rules.test.ts`) e componentes/cálculo no front
+- [ ] CI no GitHub Actions: typecheck/lint + testes + build nos dois apps
+- [ ] Domínio mais rico: tipo de contrato (SERVICO/PRODUTO/ASSINATURA),
+      desconto e moeda
+- [ ] Editar/excluir cliente (exclusão bloqueada com 409 se houver contratos)
+- [ ] Itens do contrato: 1+ itens por contrato; `value` é sempre derivado
+      (soma dos itens − desconto, no servidor) — nunca aceito da API
+
 > Antes de considerar a tarefa concluída, invoque a skill
 > `verify-requirements` para conferir este checklist item a item contra o
 > código real.
@@ -85,9 +100,15 @@ webMais/
 
 - `User { id, email, passwordHash }` — só o usuário seedado, sem tela de cadastro.
 - `Client { id, name, document (unique), createdAt }`.
-- `Contract { id, number (unique), clientId → Client, value (Decimal),
+- `Contract { id, number (unique), clientId → Client, type (enum: SERVICO |
+  PRODUTO | ASSINATURA), currency (default BRL), value (Decimal, DERIVADO:
+  soma dos itens − discount, calculado no servidor), discount (Decimal),
   dueDate (Date), status (enum: ATIVO | VENCIDO | ENCERRADO, default ATIVO),
-  createdAt, updatedAt }`.
+  items → ContractItem[], createdAt, updatedAt }`.
+- `ContractItem { id, contractId → Contract (onDelete: Cascade), description,
+  quantity (Int), unitPrice (Decimal) }` — todo contrato tem 1+ itens; a
+  migration `contract_types_items_financials` fez backfill de um item único
+  por contrato pré-existente.
 
 ## 6. Regras de negócio críticas
 

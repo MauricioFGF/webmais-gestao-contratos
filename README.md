@@ -58,9 +58,15 @@ npm run dev               # http://localhost:5173
 ## Funcionalidades
 
 - **Login/Logoff** com JWT (expiração de 8h); rotas protegidas no front e no back.
-- **Clientes**: cadastro (nome + documento único) e listagem.
-- **Contratos**: CRUD completo (número único, cliente, valor, vencimento),
+- **Clientes**: cadastro, edição e exclusão (bloqueada se houver contratos
+  vinculados) — nome + documento único.
+- **Contratos**: CRUD completo (número único, cliente, tipo, vencimento),
   vinculado a um cliente.
+- **Itens do contrato**: cada contrato tem 1+ itens (descrição, quantidade,
+  preço unitário); o **valor do contrato é derivado** — soma dos itens menos o
+  desconto, calculado no servidor (nunca aceito da API).
+- **Domínio financeiro**: tipo de contrato (Serviço/Produto/Assinatura),
+  desconto e moeda.
 - **Encerramento manual** de contrato, com feedback visual (badge muda, linha
   destacada e toast de confirmação). Encerrado é definitivo — o job de
   vencimento nunca reabre/altera um contrato encerrado.
@@ -80,18 +86,49 @@ npm run dev               # http://localhost:5173
 
 | Método | Rota | Descrição | Auth |
 |---|---|---|---|
-| POST | `/auth/login` | Login, retorna JWT | — |
+| POST | `/auth/login` | Login, retorna JWT (rate limit 10/min por IP) | — |
+| GET | `/health` | Health check | — |
 | GET | `/clients` | Lista clientes | ✔ |
 | POST | `/clients` | Cadastra cliente | ✔ |
+| PUT | `/clients/:id` | Edita cliente | ✔ |
+| DELETE | `/clients/:id` | Exclui cliente (409 se tiver contratos) | ✔ |
 | GET | `/contracts` | Lista contratos (cache Redis) | ✔ |
 | GET | `/contracts/summary` | Contagem por status (cache Redis) | ✔ |
 | GET | `/contracts/:id` | Detalhe de contrato | ✔ |
-| POST | `/contracts` | Cadastra contrato | ✔ |
-| PUT | `/contracts/:id` | Edita contrato | ✔ |
+| POST | `/contracts` | Cadastra contrato (com itens; valor calculado) | ✔ |
+| PUT | `/contracts/:id` | Edita contrato (itens substituídos; valor recalculado) | ✔ |
 | PATCH | `/contracts/:id/encerrar` | Encerra contrato manualmente | ✔ |
 | DELETE | `/contracts/:id` | Exclui contrato | ✔ |
 
 O logoff é client-side (descarte do token JWT), como é padrão em auth stateless.
+
+## Testes
+
+```bash
+cd backend && npm test     # regras de negócio (valor derivado, status, encerramento definitivo)
+cd frontend && npm test    # componentes e cálculo de total do form
+```
+
+## CI
+
+Pipeline no GitHub Actions (`.github/workflows/ci.yml`): a cada push/PR roda,
+para backend e frontend, typecheck/lint, testes e build.
+
+## Deploy (Render)
+
+O repositório inclui:
+
+- `backend/Dockerfile` — build multi-stage; roda `prisma migrate deploy` no boot;
+- `frontend/Dockerfile` + `nginx.conf` — build estático servido por nginx (para
+  qualquer cloud que rode containers);
+- `render.yaml` — blueprint que provisiona tudo no Render: Postgres e Key Value
+  (Redis) gerenciados, backend via Docker e frontend como site estático.
+
+Passos: no dashboard do Render, **New + > Blueprint**, aponte para este
+repositório e aplique. Depois do primeiro deploy:
+
+1. Ajuste `VITE_API_URL` no serviço do frontend para a URL real do backend;
+2. Rode o seed uma única vez no shell do backend: `npx prisma db seed`.
 
 ## Estrutura
 
