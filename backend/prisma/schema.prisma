@@ -33,16 +33,38 @@ enum ContractStatus {
   ENCERRADO
 }
 
+enum ContractType {
+  SERVICO
+  PRODUTO
+  ASSINATURA
+}
+
 model Contract {
   id        String         @id @default(uuid())
   number    String         @unique
   clientId  String
   client    Client         @relation(fields: [clientId], references: [id])
+  type      ContractType   @default(SERVICO)
+  currency  String         @default("BRL")
+  // Derivado: soma dos itens (quantity * unitPrice) - discount. Nunca aceito da API.
   value     Decimal        @db.Decimal(12, 2)
+  discount  Decimal        @default(0) @db.Decimal(12, 2)
   dueDate   DateTime       @db.Date
   status    ContractStatus @default(ATIVO)
+  items     ContractItem[]
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
 
   @@map("contracts")
+}
+
+model ContractItem {
+  id          String   @id @default(uuid())
+  contractId  String
+  contract    Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Int
+  unitPrice   Decimal  @db.Decimal(12, 2)
+
+  @@map("contract_items")
 }

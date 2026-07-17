@@ -4,15 +4,27 @@ import { prisma } from '../../config/prisma.js';
 import { CACHE_KEYS, getCached, setCached, invalidateContractCaches } from '../../lib/cache.js';
 import { HttpError } from '../../middleware/errorHandler.js';
 import { expireOverdueContracts } from './contracts.service.js';
+import { computeContractValue, resolveContractStatus } from './contract.rules.js';
+
+const itemSchema = z.object({
+  description: z.string().min(1, 'Descrição do item é obrigatória'),
+  quantity: z.coerce.number().int().positive('Quantidade deve ser um inteiro positivo'),
+  unitPrice: z.coerce.number().positive('Preço unitário deve ser positivo'),
+});
 
 const contractSchema = z.object({
   number: z.string().min(1, 'Número é obrigatório'),
   clientId: z.string().uuid('Cliente inválido'),
-  value: z.coerce.number().positive('Valor deve ser positivo'),
+  type: z.enum(['SERVICO', 'PRODUTO', 'ASSINATURA']).default('SERVICO'),
+  discount: z.coerce.number().min(0, 'Desconto não pode ser negativo').default(0),
   dueDate: z.coerce.date(),
+  items: z.array(itemSchema).min(1, 'Contrato precisa de pelo menos um item'),
 });
 
-const clientInclude = { client: { select: { id: true, name: true, document: true } } };
+const clientInclude = {
+  client: { select: { id: true, name: true, document: true } },
+  items: { select: { id: true, description: true, quantity: true, unitPrice: true } },
+};
 
 export const contractsRoutes = Router();
 
@@ -70,10 +82,14 @@ contractsRoutes.get('/:id', async (req, res, next) => {
 
 contractsRoutes.post('/', async (req, res, next) => {
   try {
-    const data = contractSchema.parse(req.body);
-    const status = data.dueDate < new Date() ? 'VENCIDO' : 'ATIVO';
+    const { items, ...data } = contractSchema.parse(req.body);
     const contract = await prisma.contract.create({
-      data: { ...data, status },
+      data: {
+        ...data,
+        value: computeContractValue(items, data.discount),
+        status: resolveContractStatus(data.dueDate, null),
+        items: { create: items },
+      },
       include: clientInclude,
     });
     await invalidateContractCaches();
@@ -85,21 +101,19 @@ contractsRoutes.post('/', async (req, res, next) => {
 
 contractsRoutes.put('/:id', async (req, res, next) => {
   try {
-    const data = contractSchema.parse(req.body);
+    const { items, ...data } = contractSchema.parse(req.body);
     const existing = await prisma.contract.findUnique({ where: { id: req.params.id } });
     if (!existing) {
       throw new HttpError(404, 'Contrato não encontrado');
     }
-    // Encerrado é definitivo; para os demais, recalcula pelo novo vencimento
-    const status =
-      existing.status === 'ENCERRADO'
-        ? 'ENCERRADO'
-        : data.dueDate < new Date()
-          ? 'VENCIDO'
-          : 'ATIVO';
     const contract = await prisma.contract.update({
       where: { id: req.params.id },
-      data: { ...data, status },
+      data: {
+        ...data,
+        value: computeContractValue(items, data.discount),
+        status: resolveContractStatus(data.dueDate, existing.status),
+        items: { deleteMany: {}, create: items },
+      },
       include: clientInclude,
     });
     await invalidateContractCaches();
