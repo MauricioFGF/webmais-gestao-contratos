@@ -46,7 +46,6 @@ model Contract {
   client    Client         @relation(fields: [clientId], references: [id])
   type      ContractType   @default(SERVICO)
   currency  String         @default("BRL")
-  // Derivado: soma dos itens (quantity * unitPrice) - discount. Nunca aceito da API.
   value     Decimal        @db.Decimal(12, 2)
   discount  Decimal        @default(0) @db.Decimal(12, 2)
   dueDate   DateTime       @db.Date

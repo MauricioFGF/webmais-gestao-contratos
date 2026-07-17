@@ -1,8 +1,3 @@
-# Blueprint do Render: https://render.com/docs/blueprint-spec
-# Deploy: New + > Blueprint no dashboard do Render, apontando para este repo.
-# O frontend é publicado como site estático (build do Vite); o backend roda
-# o Dockerfile (migrate deploy no boot). Postgres e Key Value (Redis) gerenciados.
-
 databases:
   - name: webmais-postgres
     databaseName: contratos
@@ -44,7 +39,6 @@ services:
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
     envVars:
-      # Ajuste para a URL real do backend após o primeiro deploy
       - key: VITE_API_URL
         value: https://webmais-backend.onrender.com
     routes:
