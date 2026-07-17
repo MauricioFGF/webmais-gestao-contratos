@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import { useAuth } from './useAuth';
 import { Navbar } from '../components/Navbar';
 
 export function ProtectedRoute() {
