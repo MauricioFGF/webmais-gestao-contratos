@@ -3,7 +3,6 @@ export interface ItemLike {
   unitPrice: number | string;
 }
 
-// Espelho da regra do backend: total = soma(qtd * preço) - desconto, nunca negativo.
 export function computeContractTotal(items: ItemLike[], discount: number | string): number {
   const total = items.reduce((sum, item) => {
     const qty = Number(item.quantity) || 0;

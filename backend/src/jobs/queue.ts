@@ -8,7 +8,6 @@ export const contractExpirationQueue = new Queue(CONTRACT_EXPIRATION_QUEUE, {
 });
 
 export async function scheduleContractExpirationJob() {
-  // A cada 1 min de propósito: torna o vencimento automático visível em demo
   await contractExpirationQueue.upsertJobScheduler(
     'expire-overdue',
     { every: 60_000 },

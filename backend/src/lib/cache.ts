@@ -20,7 +20,6 @@ export async function setCached(key: string, value: unknown): Promise<void> {
   try {
     await redis.set(key, JSON.stringify(value), 'EX', TTL_SECONDS);
   } catch {
-    // cache é best-effort: falha de Redis não deve derrubar a request
   }
 }
 
@@ -28,6 +27,5 @@ export async function invalidateContractCaches(): Promise<void> {
   try {
     await redis.del(CACHE_KEYS.contracts, CACHE_KEYS.summary);
   } catch {
-    // idem
   }
 }
