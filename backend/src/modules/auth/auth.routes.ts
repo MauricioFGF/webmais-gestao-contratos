@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { rateLimit } from 'express-rate-limit';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -11,9 +12,17 @@ const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+const loginRateLimit = rateLimit({
+  windowMs: 60_000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Muitas tentativas de login. Aguarde 1 minuto.' },
+});
+
 export const authRoutes = Router();
 
-authRoutes.post('/login', async (req, res, next) => {
+authRoutes.post('/login', loginRateLimit, async (req, res, next) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
     const user = await prisma.user.findUnique({ where: { email } });
