@@ -1,5 +1,5 @@
-import { prisma } from '../../config/prisma';
-import { invalidateContractCaches } from '../../lib/cache';
+import { prisma } from '../../config/prisma.js';
+import { invalidateContractCaches } from '../../lib/cache.js';
 
 // Marca como VENCIDO todo contrato ATIVO cuja data de vencimento já passou.
 // Usado pelo job periódico (BullMQ) e como lazy-check na listagem.

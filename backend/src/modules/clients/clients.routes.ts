@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { prisma } from '../../config/prisma';
+import { prisma } from '../../config/prisma.js';
 
 const clientSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),

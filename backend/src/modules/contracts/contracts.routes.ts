@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { prisma } from '../../config/prisma';
-import { CACHE_KEYS, getCached, setCached, invalidateContractCaches } from '../../lib/cache';
-import { HttpError } from '../../middleware/errorHandler';
-import { expireOverdueContracts } from './contracts.service';
+import { prisma } from '../../config/prisma.js';
+import { CACHE_KEYS, getCached, setCached, invalidateContractCaches } from '../../lib/cache.js';
+import { HttpError } from '../../middleware/errorHandler.js';
+import { expireOverdueContracts } from './contracts.service.js';
 
 const contractSchema = z.object({
   number: z.string().min(1, 'Número é obrigatório'),

@@ -1,10 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import { authRoutes } from './modules/auth/auth.routes';
-import { clientsRoutes } from './modules/clients/clients.routes';
-import { contractsRoutes } from './modules/contracts/contracts.routes';
-import { authenticate } from './middleware/authenticate';
-import { errorHandler } from './middleware/errorHandler';
+import { authRoutes } from './modules/auth/auth.routes.js';
+import { clientsRoutes } from './modules/clients/clients.routes.js';
+import { contractsRoutes } from './modules/contracts/contracts.routes.js';
+import { authenticate } from './middleware/authenticate.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
 export const app = express();
 

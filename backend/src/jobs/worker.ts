@@ -1,7 +1,7 @@
 import { Worker } from 'bullmq';
-import { redis } from '../config/redis';
-import { CONTRACT_EXPIRATION_QUEUE } from './queue';
-import { expireOverdueContracts } from '../modules/contracts/contracts.service';
+import { redis } from '../config/redis.js';
+import { CONTRACT_EXPIRATION_QUEUE } from './queue.js';
+import { expireOverdueContracts } from '../modules/contracts/contracts.service.js';
 
 export function startContractExpirationWorker() {
   const worker = new Worker(

@@ -1,8 +1,8 @@
 import 'dotenv/config';
-import { app } from './app';
-import { env } from './config/env';
-import { scheduleContractExpirationJob } from './jobs/queue';
-import { startContractExpirationWorker } from './jobs/worker';
+import { app } from './app.js';
+import { env } from './config/env.js';
+import { scheduleContractExpirationJob } from './jobs/queue.js';
+import { startContractExpirationWorker } from './jobs/worker.js';
 
 async function bootstrap() {
   startContractExpirationWorker();

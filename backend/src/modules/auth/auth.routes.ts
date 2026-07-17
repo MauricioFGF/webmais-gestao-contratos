@@ -3,9 +3,9 @@ import { rateLimit } from 'express-rate-limit';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../../config/prisma';
-import { env } from '../../config/env';
-import { HttpError } from '../../middleware/errorHandler';
+import { prisma } from '../../config/prisma.js';
+import { env } from '../../config/env.js';
+import { HttpError } from '../../middleware/errorHandler.js';
 
 const loginSchema = z.object({
   email: z.string().email(),

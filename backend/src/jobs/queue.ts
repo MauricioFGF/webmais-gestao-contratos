@@ -1,5 +1,5 @@
 import { Queue } from 'bullmq';
-import { redis } from '../config/redis';
+import { redis } from '../config/redis.js';
 
 export const CONTRACT_EXPIRATION_QUEUE = 'contract-expiration';
 
