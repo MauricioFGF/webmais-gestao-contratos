@@ -4,6 +4,16 @@ Módulo simplificado de Gestão de Contratos: cadastro de clientes e contratos c
 controle de status (**Ativo / Vencido / Encerrado**), desenvolvido como desafio
 técnico para a WebMais.
 
+## Demo
+
+**https://webmais-frontend.onrender.com**
+
+Login: `admin@webmais.com` / `admin123`.
+
+> ⚠️ O backend está hospedado no plano free do Render, que hiberna após ~15 min
+> sem tráfego. O **primeiro acesso** pode levar entre **30s e 60s** para
+> responder enquanto o serviço "acorda" — depois disso a navegação fica normal.
+
 ## Stack
 
 | Camada | Tecnologia |
@@ -105,9 +115,15 @@ O logoff é client-side (descarte do token JWT), como é padrão em auth statele
 ## Testes
 
 ```bash
-cd backend && npm test     # regras de negócio (valor derivado, status, encerramento definitivo)
-cd frontend && npm test    # componentes e cálculo de total do form
+cd backend && npm test     # unitários (regras de negócio, middleware, error handler) +
+                            # integração (rotas de auth/clients/contracts via supertest)
+cd frontend && npm test    # componentes (Toast, Modal, StatusBadge) e cálculo de total do form
 ```
+
+Os testes de integração do backend batem em Postgres/Redis reais — precisa do
+`docker compose up -d` rodando (mesma infra do desenvolvimento). Eles criam e
+removem seus próprios dados (sufixo aleatório), sem interferir no que você
+cadastrou manualmente testando a aplicação.
 
 ## CI
 
