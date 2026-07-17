@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './useAuth';
+import { extractErrorMessage, useToast } from '../components/useToast';
 
 export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
   const [email, setEmail] = useState('admin@webmais.com');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,8 +19,10 @@ export function LoginPage() {
     try {
       await login(email, password);
       navigate('/contracts');
-    } catch {
-      setError('Credenciais inválidas');
+    } catch (err) {
+      const message = extractErrorMessage(err, 'Credenciais inválidas. Confira o e-mail e a senha.');
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -26,14 +30,19 @@ export function LoginPage() {
 
   return (
     <div className="login-wrapper">
-      <form className="card login-card" onSubmit={handleSubmit}>
+      <div className="login-brand">
+        <span className="login-logo">📜</span>
         <h1>Gestão de Contratos</h1>
+        <p>Controle de clientes e contratos em um só lugar</p>
+      </div>
+      <form className="card login-card" onSubmit={handleSubmit}>
         <label>
           E-mail
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            autoComplete="username"
             required
           />
         </label>
@@ -43,6 +52,7 @@ export function LoginPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
             required
           />
         </label>

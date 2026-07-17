@@ -1,9 +1,12 @@
 import { createContext, useContext } from 'react';
+import type { AuthUser } from '../api/services';
 
 export interface AuthContextValue {
+  user: AuthUser | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null);

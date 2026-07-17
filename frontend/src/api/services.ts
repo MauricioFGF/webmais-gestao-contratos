@@ -1,12 +1,16 @@
 import { http } from './http';
 import type { Client, Contract, ContractInput, ContractSummary } from './types';
 
+export interface AuthUser {
+  id: string;
+  email: string;
+}
+
 export const authApi = {
   login: (email: string, password: string) =>
-    http.post<{ token: string; user: { id: string; email: string } }>('/auth/login', {
-      email,
-      password,
-    }),
+    http.post<{ user: AuthUser }>('/auth/login', { email, password }),
+  logout: () => http.post('/auth/logout'),
+  me: () => http.get<{ user: AuthUser }>('/auth/me'),
 };
 
 export const clientsApi = {
