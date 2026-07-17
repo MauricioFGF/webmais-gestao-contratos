@@ -182,15 +182,20 @@ export function ContractFormModal({ contractId, onClose, onSaved }: ContractForm
                     required
                   />
                 </label>
-                <button
-                  type="button"
-                  className="btn-small btn-danger"
-                  onClick={() => removeItem(index)}
-                  disabled={items.length === 1}
-                  title="Remover item"
-                >
-                  ✕
-                </button>
+                <div className="item-row-remove">
+                  <span className="item-row-remove-spacer" aria-hidden="true">
+                    &nbsp;
+                  </span>
+                  <button
+                    type="button"
+                    className="btn-small btn-danger"
+                    onClick={() => removeItem(index)}
+                    disabled={items.length === 1}
+                    title="Remover item"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
             ))}
             <button type="button" className="btn-secondary btn-small" onClick={addItem}>
